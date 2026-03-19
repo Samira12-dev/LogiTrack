@@ -1,8 +1,7 @@
-package com.example.LOGITRACK.Service;
+package com.example.LOGITRACK.service;
 
-import com.example.LOGITRACK.ENTITY.Client;
-import com.example.LOGITRACK.ENTITY.LigneCommand;
-import com.example.LOGITRACK.Repository.ClientRepo;
+import com.example.LOGITRACK.entity.Client;
+import com.example.LOGITRACK.repository.ClientRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

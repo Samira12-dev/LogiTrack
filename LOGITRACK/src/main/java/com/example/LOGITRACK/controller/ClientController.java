@@ -1,7 +1,7 @@
-package com.example.LOGITRACK.Controller;
+package com.example.LOGITRACK.controller;
 
-import com.example.LOGITRACK.ENTITY.Client;
-import com.example.LOGITRACK.Service.ClientService;
+import com.example.LOGITRACK.entity.Client;
+import com.example.LOGITRACK.service.ClientService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class ClientController {
     }
 
     @PostMapping
-    public Client addClient(Client client){
+    public Client addClient(@RequestBody Client client){
         return  clientService.addClient(client);
     }
     @GetMapping

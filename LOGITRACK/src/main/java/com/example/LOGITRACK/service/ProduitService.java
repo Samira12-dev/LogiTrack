@@ -1,8 +1,8 @@
-package com.example.LOGITRACK.Service;
+package com.example.LOGITRACK.service;
 
 
-import com.example.LOGITRACK.ENTITY.Produit;
-import com.example.LOGITRACK.Repository.ProduitRepo;
+import com.example.LOGITRACK.entity.Produit;
+import com.example.LOGITRACK.repository.ProduitRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +33,6 @@ public class ProduitService {
         return produitRepo.findbyCategory(category);
     }
     public List<Produit> getProduitByPrixInferiuer(double price){
-        return produitRepo.findbyprixInferieur(price);
+        return produitRepo.findByPrixLessThan(price);
     }
 }

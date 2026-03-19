@@ -1,10 +1,9 @@
-package com.example.LOGITRACK.Service;
+package com.example.LOGITRACK.service;
 
-import com.example.LOGITRACK.ENTITY.Client;
-import com.example.LOGITRACK.ENTITY.Command;
-import com.example.LOGITRACK.Repository.ClientRepo;
-import com.example.LOGITRACK.Repository.CommandRepo;
-import com.example.LOGITRACK.Repository.ProduitRepo;
+import com.example.LOGITRACK.entity.Client;
+import com.example.LOGITRACK.entity.Command;
+import com.example.LOGITRACK.repository.ClientRepo;
+import com.example.LOGITRACK.repository.CommandRepo;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -41,9 +40,9 @@ public class CommandService {
         return  commandRepo.save(command);
     }
     public List<Command>  getCommandByClient(Long clientId){
-        return  commandRepo.findByClinetId(clientId);
+        return  commandRepo.findByClientId(clientId);
     }
     public  long totalCommands(){
-        return commandRepo.coun();
+        return commandRepo.countCommands();
     }
 }

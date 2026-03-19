@@ -1,7 +1,7 @@
-package com.example.LOGITRACK.Controller;
+package com.example.LOGITRACK.controller;
 
-import com.example.LOGITRACK.ENTITY.Produit;
-import com.example.LOGITRACK.Service.ProduitService;
+import com.example.LOGITRACK.entity.Produit;
+import com.example.LOGITRACK.service.ProduitService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

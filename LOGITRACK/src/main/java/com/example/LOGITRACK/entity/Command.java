@@ -1,4 +1,4 @@
-package com.example.LOGITRACK.ENTITY;
+package com.example.LOGITRACK.entity;
 
 
 import jakarta.persistence.*;
@@ -16,7 +16,7 @@ public class Command {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
-    @OneToMany(mappedBy = "commande")
+    @OneToMany(mappedBy = "command")
     private List<LigneCommand> lignes;
 
 

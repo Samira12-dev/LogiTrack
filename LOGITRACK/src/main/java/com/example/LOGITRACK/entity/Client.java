@@ -1,4 +1,4 @@
-package com.example.LOGITRACK.ENTITY;
+package com.example.LOGITRACK.entity;
 
 import jakarta.persistence.*;
 
