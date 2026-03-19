@@ -16,9 +16,11 @@ public class ClientService {
     public Client addClient(Client client){
         return clientRepo.save(client);
     }
+
     public List<Client> getAllClient(){
         return clientRepo.findAll();
     }
+
     public Client getById(Long id){
         return clientRepo.findById(id).orElseThrow(()->new RuntimeException("not found"));
     }

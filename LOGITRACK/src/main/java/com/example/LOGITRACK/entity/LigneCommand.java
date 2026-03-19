@@ -11,22 +11,22 @@ public class LigneCommand {
     private  int quantity;
     @ManyToOne
     @JoinColumn(name = "commande_id")
-    private Command command;
+    private Command commande;
     @ManyToOne
     @JoinColumn(name = "produit_id")
     private Produit produit;
 
     public LigneCommand(){}
 
-    public LigneCommand(Long id, int quantity, Command command, Produit produit) {
+    public LigneCommand(Long id, int quantity, Command commande, Produit produit) {
         this.id = id;
         this.quantity = quantity;
-        this.command = command;
+        this.commande = commande;
         this.produit = produit;
     }
-    public LigneCommand( int quantity, Command command, Produit produit) {
+    public LigneCommand( int quantity, Command commande, Produit produit) {
         this.quantity = quantity;
-        this.command = command;
+        this.commande = commande;
         this.produit = produit;
     }
 

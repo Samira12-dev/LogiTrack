@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name = "client")
 public class Client {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,7 +15,7 @@ public class Client {
     private String telephone;
     private String ville;
     @OneToMany(mappedBy = "client")
-    private List<Command> commands;
+    private List<Command> commande;
 
     public  Client(){}
 
@@ -24,7 +25,7 @@ public class Client {
         this.email = email;
         this.telephone = telephone;
         this.ville = ville;
-        this.commands = commands;
+        this.commande = commands;
     }
 
     public Client( String nom, String email, String telephone, String ville,List<Command> commands) {
@@ -32,7 +33,7 @@ public class Client {
         this.email = email;
         this.telephone = telephone;
         this.ville = ville;
-        this.commands = commands;
+        this.commande = commands;
     }
 
     public Long getId() {
@@ -76,10 +77,10 @@ public class Client {
     }
 
     public List<Command> getCommands() {
-        return commands;
+        return commande;
     }
 
     public void setCommands(List<Command> commands) {
-        this.commands = commands;
+        this.commande = commands;
     }
 }
