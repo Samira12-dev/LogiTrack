@@ -1,5 +1,6 @@
 package com.example.LOGITRACK.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -14,8 +15,9 @@ public class Client {
     private String email;
     private String telephone;
     private String ville;
+    @JsonIgnore
     @OneToMany(mappedBy = "client")
-    private List<Command> commande;
+    private List<Command> commandes;
 
     public  Client(){}
 
@@ -25,7 +27,7 @@ public class Client {
         this.email = email;
         this.telephone = telephone;
         this.ville = ville;
-        this.commande = commands;
+        this.commandes = commands;
     }
 
     public Client( String nom, String email, String telephone, String ville,List<Command> commands) {
@@ -33,7 +35,7 @@ public class Client {
         this.email = email;
         this.telephone = telephone;
         this.ville = ville;
-        this.commande = commands;
+        this.commandes = commands;
     }
 
     public Long getId() {
@@ -77,10 +79,10 @@ public class Client {
     }
 
     public List<Command> getCommands() {
-        return commande;
+        return commandes;
     }
 
     public void setCommands(List<Command> commands) {
-        this.commande = commands;
+        this.commandes = commands;
     }
 }

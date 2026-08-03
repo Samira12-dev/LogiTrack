@@ -1,8 +1,14 @@
 package com.example.LOGITRACK.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 
 @Entity
+@Setter
+@Getter
+@Table(name = "ligne_commande")
 public class LigneCommand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,21 +34,5 @@ public class LigneCommand {
         this.quantity = quantity;
         this.commande = commande;
         this.produit = produit;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 }

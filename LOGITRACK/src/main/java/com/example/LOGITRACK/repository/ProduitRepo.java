@@ -9,10 +9,9 @@ import java.util.List;
 public interface ProduitRepo extends JpaRepository<Produit,Long> {
 
     @Query("SELECT p FROM Produit p WHERE p.category = :category")
-    List<Produit> findbyCategory(String category);
+    List<Produit> findByCategory(String category);
 
 
     @Query("SELECT p FROM Produit p WHERE p.price < :prix")
-    List<Produit> findByPrixLessThan(double prix);
-
+    List<Produit> findByPriceLessThan(double price);
 }

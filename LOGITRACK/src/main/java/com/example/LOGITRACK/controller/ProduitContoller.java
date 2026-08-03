@@ -1,7 +1,11 @@
 package com.example.LOGITRACK.controller;
 
+import com.example.LOGITRACK.dto.request.ProduitRequestDTO;
+import com.example.LOGITRACK.dto.response.ProduitResponseDTO;
 import com.example.LOGITRACK.entity.Produit;
 import com.example.LOGITRACK.service.ProduitService;
+import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,30 +19,41 @@ public class ProduitContoller {
          this.produitService= produitService;
      }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
      @PostMapping
-    public Produit addProduit(@RequestBody Produit produit){
+    public ProduitResponseDTO addProduit(@Valid @RequestBody ProduitRequestDTO produit){
          return  produitService.addProduit(produit);
      }
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','AGENT')")
      @GetMapping
-    public List<Produit> getAllProducts(){
+    public List<ProduitResponseDTO> getAllProducts(){
          return produitService.getAllProduits();
      }
+
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
      @GetMapping("/{id}")
-    public Produit getProduit(@PathVariable Long id){
+    public ProduitResponseDTO getProduit(@PathVariable Long id){
          return produitService.getById(id);
      }
+
+    @PreAuthorize("hasRole('ADMIN')")
      @DeleteMapping("/{id}")
     public void deleteProduit(@PathVariable Long id){
           produitService.deleteProduit(id);
      }
 
+
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
      @GetMapping("/category/{categorie}")
-    public List<Produit> getProduitByCategory(String categorie){
-         return produitService.getProduitByCategory(categorie);
+    public List<ProduitResponseDTO> getProduitByCategory( @PathVariable String category){
+         return produitService.getProduitByCategory(category);
      }
 
-     @GetMapping("/price/prix")
-    public List<Produit> getByInferieurPrix( double prix){
-         return produitService.getProduitByPrixInferiuer(prix);
-     }
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+    @GetMapping("/price")
+    public List<ProduitResponseDTO> getByInferieurPrix(
+            @RequestParam double prix){
+
+        return produitService.getProduitByPrixInferieur(prix);
+    }
 }

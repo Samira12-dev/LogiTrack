@@ -1,7 +1,10 @@
 package com.example.LOGITRACK.service;
 
 
+import com.example.LOGITRACK.dto.request.ProduitRequestDTO;
+import com.example.LOGITRACK.dto.response.ProduitResponseDTO;
 import com.example.LOGITRACK.entity.Produit;
+import com.example.LOGITRACK.mapper.ProduitMapper;
 import com.example.LOGITRACK.repository.ProduitRepo;
 import org.springframework.stereotype.Service;
 
@@ -10,29 +13,54 @@ import java.util.List;
 @Service
 public class ProduitService {
     private final ProduitRepo produitRepo;
-
-    public ProduitService(ProduitRepo produitRepo) {
+    private  final ProduitMapper mapper;
+    public ProduitService(ProduitRepo produitRepo, ProduitMapper mapper) {
         this.produitRepo = produitRepo;
+        this.mapper = mapper;
     }
 
-    public Produit addProduit(Produit produit) {
-        return produitRepo.save(produit);
+    public ProduitResponseDTO addProduit(ProduitRequestDTO produitRequestDTO) {
+        Produit  produit =mapper.toEntity(produitRequestDTO);
+        Produit saved= produitRepo.save(produit);
+        return  mapper.toResponse(saved);
     }
 
-    public List<Produit> getAllProduits(){
-        return produitRepo.findAll();
+    public List<ProduitResponseDTO> getAllProduits(){
+        return produitRepo.findAll()
+                .stream()
+                .map(mapper::toResponse)
+                .toList();
     }
-    public Produit getById(Long id){
-        return produitRepo.findById(id).orElseThrow(()->new RuntimeException("produit not exist"));
+    public ProduitResponseDTO getById(Long id){
+        Produit produit = produitRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produit not found"));
+
+        return mapper.toResponse(produit);
     }
 
     public void deleteProduit(Long id){
-         produitRepo.deleteById(id);
+        if (!produitRepo.existsById(id)) {
+            throw new RuntimeException("Produit not found");
+        }
+
+        produitRepo.deleteById(id);
     }
-    public List<Produit> getProduitByCategory(String category){
-        return produitRepo.findbyCategory(category);
+    public List<ProduitResponseDTO> getProduitByCategory(String category) {
+
+        return produitRepo.findByCategory(category)
+                .stream()
+                .map(mapper::toResponse)
+                .toList();
     }
-    public List<Produit> getProduitByPrixInferiuer(double price){
-        return produitRepo.findByPrixLessThan(price);
+
+
+    public List<ProduitResponseDTO> getProduitByPrixInferieur(double price) {
+
+        return produitRepo.findByPriceLessThan(price)
+                .stream()
+                .map(mapper::toResponse)
+                .toList();
     }
+
+
 }
