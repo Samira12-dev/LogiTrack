@@ -16,6 +16,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 
 @Configuration
@@ -27,6 +32,41 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
 
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(
+                List.of("http://localhost:5178",
+                        "http://localhost:5173",
+                        "http://localhost:5174",
+                        "http://localhost:5175",
+                        "http://localhost:5176",
+                        "http://localhost:5177"
+
+                )
+        );
+
+        config.setAllowedMethods(
+                List.of("*")
+        );
+
+        config.setAllowedHeaders(
+                List.of("*")
+        );
+
+        config.setAllowCredentials(true);
+
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
     @Bean
     public PasswordEncoder passwordEncoder() {
 
@@ -66,7 +106,7 @@ public class SecurityConfig {
         http
 
                 .csrf(csrf -> csrf.disable())
-
+                .cors(cors -> {})
 
 
                 .sessionManagement(session ->
@@ -79,17 +119,15 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
 
 
-                .authorizeHttpRequests(auth -> auth
-
-
-                        .requestMatchers("/api/auth/**")
-                        .permitAll()
 
 
 
-                        .anyRequest()
-                        .authenticated()
-                )
+                        .authorizeHttpRequests(auth -> auth
+                                .requestMatchers("/api/auth/**")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated()
+                        )
 
         .addFilterBefore(
                 jwtFilter,
