@@ -43,4 +43,10 @@ public class ClientController {
     public void deleteClient(@PathVariable Long id){
         clientService.deleteClient(id);
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','AGENT')")
+    @GetMapping("/count")
+    public Long getTotalClient(){
+        return clientService.getTotalClient();
+    }
 }
