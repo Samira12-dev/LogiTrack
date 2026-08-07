@@ -6,6 +6,8 @@ import com.example.LOGITRACK.dto.response.ProduitResponseDTO;
 import com.example.LOGITRACK.entity.Produit;
 import com.example.LOGITRACK.mapper.ProduitMapper;
 import com.example.LOGITRACK.repository.ProduitRepo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,11 +27,8 @@ public class ProduitService {
         return  mapper.toResponse(saved);
     }
 
-    public List<ProduitResponseDTO> getAllProduits(){
-        return produitRepo.findAll()
-                .stream()
-                .map(mapper::toResponse)
-                .toList();
+    public Page<ProduitResponseDTO> getAllProduits(Pageable pageable){
+        return produitRepo.findAll(pageable).map(mapper::toResponse);
     }
     public ProduitResponseDTO getById(Long id){
         Produit produit = produitRepo.findById(id)
@@ -47,7 +46,7 @@ public class ProduitService {
     }
     public List<ProduitResponseDTO> getProduitByCategory(String category) {
 
-        return produitRepo.findByCategory(category)
+        return produitRepo.findByCategoryContainingIgnoreCase(category)
                 .stream()
                 .map(mapper::toResponse)
                 .toList();
@@ -56,11 +55,17 @@ public class ProduitService {
 
     public List<ProduitResponseDTO> getProduitByPrixInferieur(double price) {
 
-        return produitRepo.findByPriceLessThan(price)
+        return produitRepo.findByPriceLessThanEqual(price)
                 .stream()
                 .map(mapper::toResponse)
                 .toList();
     }
 
 
+    public List<ProduitResponseDTO> getLowStock() {
+        return produitRepo.findByQuantityStockLessThan(10)
+                .stream()
+                .map(mapper::toResponse)
+                .toList();
+    }
 }

@@ -5,6 +5,11 @@ import com.example.LOGITRACK.dto.response.ProduitResponseDTO;
 import com.example.LOGITRACK.entity.Produit;
 import com.example.LOGITRACK.service.ProduitService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +31,20 @@ public class ProduitContoller {
      }
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER','AGENT')")
      @GetMapping
-    public List<ProduitResponseDTO> getAllProducts(){
-         return produitService.getAllProduits();
+    public Page<ProduitResponseDTO> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String orderBy,
+            @RequestParam(defaultValue = "asc") String order
+    ) {
+
+        Sort sort = order.equalsIgnoreCase("asc")
+                ? Sort.by(orderBy).ascending()
+                : Sort.by(orderBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return produitService.getAllProduits(pageable);
      }
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
@@ -44,8 +61,8 @@ public class ProduitContoller {
 
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-     @GetMapping("/category/{categorie}")
-    public List<ProduitResponseDTO> getProduitByCategory( @PathVariable String category){
+     @GetMapping("/category")
+    public List<ProduitResponseDTO> getProduitByCategory( @RequestParam String category){
          return produitService.getProduitByCategory(category);
      }
 
@@ -55,5 +72,10 @@ public class ProduitContoller {
             @RequestParam double prix){
 
         return produitService.getProduitByPrixInferieur(prix);
+    }
+
+    @GetMapping("/low-stock")
+    public List<ProduitResponseDTO> getLowStock() {
+        return produitService.getLowStock();
     }
 }
