@@ -32,37 +32,28 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequestDTO request) {
 
-
-        if(userRepository.existsByEmail(request.getEmail())) {
-
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
 
         User user = new User();
 
         user.setNom(request.getNom());
-
         user.setPrenom(request.getPrenom());
-
         user.setEmail(request.getEmail());
-
 
         user.setPassword(
                 passwordEncoder.encode(request.getPassword())
         );
 
-
-        user.setRole(Role.AGENT);
-
+        user.setRole(request.getRole());
 
         User savedUser = userRepository.save(user);
-
 
         String token = jwtUtils.generateToken(
                 savedUser.getEmail(),
                 savedUser.getRole().name()
         );
-
 
         return new AuthResponse(
                 token,
@@ -73,9 +64,6 @@ public class AuthService {
                 savedUser.getRole()
         );
     }
-
-
-
 
 
 

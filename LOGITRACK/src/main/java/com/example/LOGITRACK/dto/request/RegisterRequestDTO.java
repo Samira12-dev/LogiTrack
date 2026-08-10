@@ -1,7 +1,9 @@
 package com.example.LOGITRACK.dto.request;
 
+import com.example.LOGITRACK.enumm.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -21,6 +23,8 @@ public class RegisterRequestDTO {
     @Email(message = "Email invalide")
     private String email;
 
+    @NotNull(message = "Le rôle est obligatoire")
+    private Role role;
     @NotBlank(message = "Password obligatoire")
     private String password;
 }
