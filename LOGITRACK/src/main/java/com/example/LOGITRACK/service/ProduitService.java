@@ -68,4 +68,10 @@ public class ProduitService {
                 .map(mapper::toResponse)
                 .toList();
     }
+
+    public Long getTotalProduit() {
+        return  produitRepo.count();
+    }
+
+
 }

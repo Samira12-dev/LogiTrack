@@ -5,6 +5,9 @@ import com.example.LOGITRACK.dto.response.ClientResponseDTO;
 import com.example.LOGITRACK.entity.Client;
 import com.example.LOGITRACK.service.ClientService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +30,10 @@ public class ClientController {
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER','AGENT')")
     @GetMapping
-    public List<ClientResponseDTO> getAllClients(){
-        return  clientService.getAllClient();
+    public Page<ClientResponseDTO> getAllClients(@RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "5") int size){
+        Pageable pageable= PageRequest.of(page,size);
+        return  clientService.getAllClient(pageable);
     }
 
 

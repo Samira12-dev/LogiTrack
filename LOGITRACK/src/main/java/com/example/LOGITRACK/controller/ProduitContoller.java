@@ -78,4 +78,9 @@ public class ProduitContoller {
     public List<ProduitResponseDTO> getLowStock() {
         return produitService.getLowStock();
     }
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','AGENT')")
+    @GetMapping("/count")
+    public Long getTotalProduit(){
+        return produitService.getTotalProduit();
+    }
 }

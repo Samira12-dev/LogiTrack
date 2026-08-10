@@ -2,11 +2,14 @@ package com.example.LOGITRACK.service;
 
 import com.example.LOGITRACK.dto.request.ClientRequestDTO;
 import com.example.LOGITRACK.dto.response.ClientResponseDTO;
+import com.example.LOGITRACK.dto.response.ProduitResponseDTO;
 import com.example.LOGITRACK.entity.Client;
 import com.example.LOGITRACK.mapper.ClientMapper;
 import com.example.LOGITRACK.repository.ClientRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,12 +36,11 @@ public class ClientService {
     }
 
     @Transactional
-    public List<ClientResponseDTO> getAllClient(){
-        return clientRepo.findAll()
-                .stream()
-                .map(mapper::toResponseDTO)
-                .toList();
+    public Page<ClientResponseDTO> getAllClient(Pageable pageable){
+        return clientRepo.findAll(pageable)
+                .map(mapper::toResponseDTO);
     }
+
 
     public ClientResponseDTO getById(Long id){
         Client client = clientRepo.findById(id)

@@ -1,11 +1,15 @@
 package com.example.LOGITRACK.controller;
 
+import com.example.LOGITRACK.dto.request.LigneCommandRequestDTO;
 import com.example.LOGITRACK.dto.response.CommandResponseDTO;
 import com.example.LOGITRACK.entity.Command;
 import com.example.LOGITRACK.enumm.CommandeStatut;
 import com.example.LOGITRACK.service.ClientService;
 import com.example.LOGITRACK.service.CommandService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +36,18 @@ public class CommandController {
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER','AGENT')")
     @GetMapping
-    public List<CommandResponseDTO> getAllCommands(){
-        return  commandService.getAllCommands();
+    public Page<CommandResponseDTO> getAllCommands(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) CommandeStatut statut){
+
+        Pageable pageable=PageRequest.of(page,size);
+
+        if(statut!=null){
+            return commandService.getCommandsByStatus(statut,pageable);
+        }
+
+        return commandService.getAllCommands(pageable);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER','AGENT')")
@@ -49,7 +63,7 @@ public class CommandController {
 
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    @GetMapping("/client/clientId")
+    @GetMapping("/client/{clientId}")
     public List<CommandResponseDTO> getCommandById(@PathVariable Long clientId){
         return commandService.getCommandByClient(clientId);
     }
@@ -58,6 +72,11 @@ public class CommandController {
     @GetMapping("/count")
     public long totalCommand(){
         return commandService.totalCommands();
+    }
+    @PostMapping("/{id}/produit")
+    public CommandResponseDTO addProduit(@PathVariable Long id,@RequestBody LigneCommandRequestDTO dto){
+        dto.setCommandeId(id);
+        return commandService.addProduit(dto);
     }
 
 }
