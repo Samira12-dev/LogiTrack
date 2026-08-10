@@ -79,4 +79,18 @@ public class CommandController {
         return commandService.addProduit(dto);
     }
 
+    @GetMapping("/count/pending")
+    public long countPending(){
+        return commandService.countByStatus(CommandeStatut.EN_ATTENTE);
+    }
+
+    @GetMapping("/count/shipped")
+    public long countShipped(){
+        return commandService.countByStatus(CommandeStatut.EXPEDIEE);
+    }
+
+    @GetMapping("/count/delivered")
+    public long countDelivered(){
+        return commandService.countByStatus(CommandeStatut.LIVREE);
+    }
 }

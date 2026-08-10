@@ -115,4 +115,8 @@ public class CommandService {
         return commandRepo.findByCommandeStatut(statut,pageable)
                 .map(mapper::toResponseDTO);
     }
+
+    public long countByStatus(CommandeStatut status){
+        return commandRepo.countByCommandeStatut(status);
+    }
 }

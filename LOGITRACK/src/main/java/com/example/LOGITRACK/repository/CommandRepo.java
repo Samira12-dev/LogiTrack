@@ -17,4 +17,7 @@ public interface CommandRepo extends JpaRepository<Command,Long> {
     @Query("SELECT COUNT(c) FROM Command c")
     long countCommands();
 
-    Page<Command> findByCommandeStatut(CommandeStatut statut, Pageable pageable);}
+    Page<Command> findByCommandeStatut(CommandeStatut statut, Pageable pageable);
+
+    long countByCommandeStatut(CommandeStatut status);
+}
