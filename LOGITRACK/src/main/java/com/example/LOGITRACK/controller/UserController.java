@@ -5,6 +5,7 @@ import com.example.LOGITRACK.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +24,13 @@ public class UserController {
 
     @GetMapping
     public Page<User> getAllUsers(@RequestParam(defaultValue = "0") int page,
-                                  @RequestParam(defaultValue = "5") int size) {
-        Pageable pageable= PageRequest.of(page,size);
+                                  @RequestParam(defaultValue = "5") int size,
+                                  @RequestParam(defaultValue = "id") String orderBy,
+                                  @RequestParam(defaultValue = "asc") String order) {
+        Sort sort = order.equalsIgnoreCase("asc")
+                ? Sort.by(orderBy).ascending()
+                : Sort.by(orderBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
         return userService.getAllUsers(pageable);
     }
     @GetMapping("/me")

@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,9 +40,14 @@ public class CommandController {
     public Page<CommandResponseDTO> getAllCommands(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
-            @RequestParam(required = false) CommandeStatut statut){
+            @RequestParam(required = false) CommandeStatut statut,
+            @RequestParam(defaultValue = "id") String orderBy,
+            @RequestParam(defaultValue = "asc") String order){
 
-        Pageable pageable=PageRequest.of(page,size);
+        Sort sort = order.equalsIgnoreCase("asc")
+                ? Sort.by(orderBy).ascending()
+                : Sort.by(orderBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         if(statut!=null){
             return commandService.getCommandsByStatus(statut,pageable);

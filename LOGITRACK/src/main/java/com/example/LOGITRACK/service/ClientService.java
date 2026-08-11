@@ -36,7 +36,11 @@ public class ClientService {
     }
 
     @Transactional
-    public Page<ClientResponseDTO> getAllClient(Pageable pageable){
+    public Page<ClientResponseDTO> getAllClient(String nom, Pageable pageable){
+        if (nom != null && !nom.isEmpty()) {
+            return clientRepo.findByNomContainingIgnoreCase(nom, pageable)
+                    .map(mapper::toResponseDTO);
+        }
         return clientRepo.findAll(pageable)
                 .map(mapper::toResponseDTO);
     }
