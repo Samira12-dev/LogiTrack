@@ -1,85 +1,51 @@
 package com.example.LOGITRACK.config;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.spec.SecretKeySpec;
-import java.security.Key;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtUtils {
-
     @Value("${app.secret-key}")
-    private String secretKey;
+    private String jwtSecret;
 
     @Value("${app.expiration-time}")
-    private long expirationTime;
+    private long jwtExpiration;
 
-
-
-    public String generateToken(String email, String role) {
-
+    public String genereteToken(String email, String role, Long userId) {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("role", role)
+                .claim("id", userId)
                 .setIssuedAt(new Date())
-                .setExpiration(
-                        new Date(System.currentTimeMillis() + expirationTime)
-                )
-                .signWith(getSignKey(), SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
     }
 
-
-
-    public String extractUsername(String token) {
-
-        return getClaims(token)
+    public String getUserFromToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody()
                 .getSubject();
     }
 
+    public boolean validateJwtToken(String token) {
+        try {
+            Jwts.parser()
+                    .setSigningKey(jwtSecret)
+                    .parseClaimsJws(token);
 
-
-    public boolean validateToken(String token, UserDetails userDetails) {
-
-        String username = extractUsername(token);
-
-        return username.equals(userDetails.getUsername())
-                && !isTokenExpired(token);
-    }
-
-
-
-    private boolean isTokenExpired(String token) {
-
-        return getClaims(token)
-                .getExpiration()
-                .before(new Date());
-    }
-
-
-
-    private Claims getClaims(String token) {
-
-        return Jwts.parserBuilder()
-                .setSigningKey(getSignKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-
-
-    private Key getSignKey() {
-
-        return new SecretKeySpec(
-                secretKey.getBytes(),
-                SignatureAlgorithm.HS256.getJcaName()
-        );
+            return true;
+        } catch (Exception e) {
+            log.error("JWT validation error: {}", e.getMessage());
+            return false;
+        }
     }
 }

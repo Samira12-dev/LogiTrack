@@ -50,9 +50,10 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        String token = jwtUtils.generateToken(
+        String token = jwtUtils.genereteToken(
                 savedUser.getEmail(),
-                savedUser.getRole().name()
+                savedUser.getRole().name(),
+                savedUser.getId()
         );
 
         return new AuthResponse(
@@ -88,9 +89,10 @@ public class AuthService {
 
 
         String token =
-                jwtUtils.generateToken(
+                jwtUtils.genereteToken(
                         user.getEmail(),
-                        user.getRole().name()
+                        user.getRole().name(),
+                        user.getId()
                 );
 
 
