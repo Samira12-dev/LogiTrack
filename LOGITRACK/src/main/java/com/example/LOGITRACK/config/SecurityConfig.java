@@ -123,6 +123,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers("/api/auth/**")
                         .permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
                         .anyRequest()
                         .authenticated()
                 )

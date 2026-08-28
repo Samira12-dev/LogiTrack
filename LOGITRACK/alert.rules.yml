@@ -1,0 +1,11 @@
+groups:
+  - name: logitrack_alerts
+    rules:
+      - alert: LogiTrackDown
+        expr: up{job="logitrack-app"} == 0
+      - alert: HighHttpErrorRate
+        expr: sum(rate(http_server_requests_seconds_count{status=~"5.."}[5m])) > 0
+      - alert: SlowResponseTime
+        expr: http_server_requests_seconds_max > 1.5
+      - alert: HighMemoryUsage
+        expr: jvm_memory_used_bytes{area="heap"} > 500000000

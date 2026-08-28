@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 5s
+
+rule_files:
+  - "alert.rules.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+scrape_configs:
+  - job_name: 'logitrack-app'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['logitrack:8080']
