@@ -1,12 +1,15 @@
 package com.example.LOGITRACK.service;
 
+import com.example.LOGITRACK.client.NotificationClient;
 import com.example.LOGITRACK.dto.request.LigneCommandRequestDTO;
+import com.example.LOGITRACK.dto.request.NotificationRequestDTO;
 import com.example.LOGITRACK.dto.response.CommandResponseDTO;
 import com.example.LOGITRACK.entity.Client;
 import com.example.LOGITRACK.entity.Command;
 import com.example.LOGITRACK.entity.LigneCommand;
 import com.example.LOGITRACK.entity.Produit;
 import com.example.LOGITRACK.enumm.CommandeStatut;
+import com.example.LOGITRACK.enumm.NotificationType;
 import com.example.LOGITRACK.mapper.CommandMapper;
 import com.example.LOGITRACK.repository.ClientRepo;
 import com.example.LOGITRACK.repository.CommandRepo;
@@ -28,12 +31,15 @@ public class CommandService {
     private  final ProduitRepo produitRepo;
     private final LigneCommandRepo ligneCommandRepo;
 
-    public CommandService(ClientRepo clientRepo, CommandRepo commandRepo, CommandMapper mapper, ProduitRepo produitRepo, LigneCommandRepo ligneCommandRepo) {
+    private final NotificationClient notificationClient;
+
+    public CommandService(ClientRepo clientRepo, CommandRepo commandRepo, CommandMapper mapper, ProduitRepo produitRepo, LigneCommandRepo ligneCommandRepo, NotificationClient notificationClient) {
         this.clientRepo = clientRepo;
         this.commandRepo = commandRepo;
         this.mapper = mapper;
         this.produitRepo = produitRepo;
         this.ligneCommandRepo = ligneCommandRepo;
+        this.notificationClient = notificationClient;
     }
 
 
@@ -51,6 +57,14 @@ public class CommandService {
         command.setCommandeStatut(CommandeStatut.EN_ATTENTE);
 
         Command saveCommand= commandRepo.save(command);
+
+        NotificationRequestDTO notification =  new NotificationRequestDTO();
+
+        notification.setMessage("Order "+saveCommand.getId()+ " create successfully" );
+        notification.setType(NotificationType.ORDER_CREATED);
+        notification.setOrderId(saveCommand.getId());
+        notificationClient.createNotification(notification);
+
         return mapper.toResponseDTO(saveCommand);
     }
 
@@ -64,7 +78,7 @@ public class CommandService {
     public CommandResponseDTO getCommandById(Long id) {
 
         Command command = commandRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Command not found"));
+                .orElseThrow(() -> new RuntimeException(" Command not found"));
 
         return mapper.toResponseDTO(command);
     }
@@ -74,12 +88,25 @@ public class CommandService {
                                                   CommandeStatut statut) {
 
         Command command = commandRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Command not found"));
+                .orElseThrow(() -> new RuntimeException(" Command not found"));
 
         command.setCommandeStatut(statut);
 
         Command updated = commandRepo.save(command);
-
+        if(statut == CommandeStatut.EXPEDIEE){
+            NotificationRequestDTO notification= new NotificationRequestDTO();
+            notification.setMessage("Order "+ updated.getId()+ " has been shipped");
+            notification.setType(NotificationType.ORDER_SHIPPED);
+            notification.setOrderId(updated.getId());
+            notificationClient.createNotification(notification);
+        }
+        if(statut == CommandeStatut.LIVREE){
+            NotificationRequestDTO notification= new NotificationRequestDTO();
+            notification.setMessage("Order "+ updated.getId()+ " has been delivred");
+            notification.setType(NotificationType.ORDER_DELIVERED);
+            notification.setOrderId(updated.getId());
+            notificationClient.createNotification(notification);
+        }
         return mapper.toResponseDTO(updated);
     }
 
