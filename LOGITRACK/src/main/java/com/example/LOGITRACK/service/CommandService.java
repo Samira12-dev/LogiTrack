@@ -82,7 +82,6 @@ public class CommandService {
                     "Error communicating with Notification Service"
             );
         }
-
         return mapper.toResponseDTO(saveCommand);
     }
 
