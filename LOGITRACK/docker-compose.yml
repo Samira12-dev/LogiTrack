@@ -1,32 +1,38 @@
 services:
+
   mysql:
     image: mysql:8.0
-    container_name: logitrack-mysql
+    container_name: logitrack-db-new
     environment:
       MYSQL_ROOT_PASSWORD: Samira12
       MYSQL_DATABASE: logitrack
     ports:
-      - "3308:3306"
+      - "3309:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - logitrack-db-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pSamira12"]
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - logitrack-network
 
   logitrack:
     build: .
-    container_name: logitrack
+    container_name: logitrack-new
     depends_on:
       mysql:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/logitrack?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_URL: jdbc:mysql://logitrack-db-new:3306/logitrack?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: Samira12
+      NOTIFICATION_SERVICE_URL: http://notification-service:8081
     ports:
-      - "8080:8080"
+      - "8082:8080"
+    networks:
+      - logitrack-network
 
   prometheus:
     image: prom/prometheus:latest
@@ -36,6 +42,8 @@ services:
       - ./alert.rules.yml:/etc/prometheus/alert.rules.yml
     ports:
       - "9090:9090"
+    networks:
+      - logitrack-network
 
   alertmanager:
     image: prom/alertmanager:latest
@@ -44,12 +52,16 @@ services:
       - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
     ports:
       - "9093:9093"
+    networks:
+      - logitrack-network
 
   loki:
     image: grafana/loki:latest
     container_name: loki
     ports:
       - "3100:3100"
+    networks:
+      - logitrack-network
 
   promtail:
     image: grafana/promtail:latest
@@ -60,12 +72,20 @@ services:
     command: -config.file=/etc/promtail/promtail-config.yml
     depends_on:
       - loki
+    networks:
+      - logitrack-network
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
       - "3000:3000"
+    networks:
+      - logitrack-network
 
 volumes:
-  mysql-data:
+  logitrack-db-data:
+
+networks:
+  logitrack-network:
+    external: true
